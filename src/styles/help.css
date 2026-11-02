@@ -14,6 +14,16 @@
   color: var(--accent-strong);
 }
 
+.help-fallback {
+  font-size: 0.92rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.help-fallback:hover {
+  color: var(--accent-strong);
+}
+
 .help-button kbd,
 .shortcut-list kbd {
   display: inline-grid;
