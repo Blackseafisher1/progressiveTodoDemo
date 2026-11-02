@@ -1,11 +1,9 @@
 import type { Todo } from '../db/todos'
-import type { Filter } from '../lib/filter'
-import { pageHref } from '../lib/pagination'
+import { filterHref, type Filter } from '../lib/filter'
 
 type Props = {
   todo: Todo
   filter: Filter
-  page: number
   index?: number
   error?: string
   title?: string
@@ -14,14 +12,13 @@ type Props = {
 export function TodoEditForm({
   todo,
   filter,
-  page,
   index,
   error,
   title,
 }: Props) {
-  const action = `/todos/${todo.id}/update?filter=${filter}&page=${page}`
+  const action = `/todos/${todo.id}/update?filter=${filter}`
   const errorId = `edit-error-${todo.id}`
-  const cancelHref = `${pageHref(filter, page)}#todo-${todo.id}`
+  const cancelHref = `${filterHref(filter)}#todo-${todo.id}`
 
   return (
     <li
@@ -67,7 +64,7 @@ export function TodoEditForm({
           <a
             class="button button-ghost button-small"
             href={cancelHref}
-            hx-get={`/todos/${todo.id}?filter=${filter}&page=${page}`}
+            hx-get={`/todos/${todo.id}?filter=${filter}`}
             hx-target="closest li"
             hx-swap="outerHTML"
             data-cancel-edit

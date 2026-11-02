@@ -47,3 +47,28 @@
   --shadow: 4px 4px 0 #000;
   --shadow-small: 2px 2px 0 #000;
 }
+
+/* First visit with JS disabled: follow the operating-system preference. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #12120f;
+    --bg-soft: #1b1a15;
+    --surface: #1f1e18;
+    --surface-2: #26241c;
+    --ink: #e8dfc8;
+    --muted: #b3a88e;
+    --line: #4a4638;
+    --line-strong: #8b8167;
+    --accent: #e0a458;
+    --accent-strong: #f2c17e;
+    --accent-soft: #3a2f20;
+    --success: #8ec9a2;
+    --success-bg: #203326;
+    --danger: #e19a8c;
+    --danger-bg: #3a211d;
+    --grid: rgba(232, 223, 200, 0.05);
+    --shadow: 4px 4px 0 #000;
+    --shadow-small: 2px 2px 0 #000;
+  }
+}

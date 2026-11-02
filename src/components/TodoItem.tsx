@@ -5,7 +5,6 @@ type Props = {
   todo: Todo
   filter: Filter
   index: number
-  page: number
   showDrag?: boolean
 }
 
@@ -13,13 +12,12 @@ export function TodoItem({
   todo,
   filter,
   index,
-  page,
   showDrag = false,
 }: Props) {
-  const toggleHref = `/todos/${todo.id}/toggle?filter=${filter}&page=${page}`
-  const editHref = `/todos/${todo.id}/edit?filter=${filter}&page=${page}`
-  const deleteHref = `/todos/${todo.id}/delete?filter=${filter}&page=${page}`
-  const swapHref = `/todos/swap?filter=${filter}&page=${page}`
+  const toggleHref = `/todos/${todo.id}/toggle?filter=${filter}`
+  const editHref = `/todos/${todo.id}/edit?filter=${filter}`
+  const deleteHref = `/todos/${todo.id}/delete?filter=${filter}`
+  const swapHref = `/todos/swap?filter=${filter}`
 
   return (
     <li

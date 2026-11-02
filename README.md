@@ -14,7 +14,7 @@ A deliberately small todo demo that is also a **progressive-enhancement blueprin
 - **Accessibility and SEO** treated as part of the structure, not an afterthought
 
 The goal is readability, not feature count. There is no auth, multi-user support,
-pagination, tags, or state-management library.
+tags, or state-management library.
 
 ## Progressive enhancement contract
 
@@ -25,7 +25,6 @@ The same routes serve both modes. The server checks the `HX-Request` header:
 | Real `GET` links and `POST` forms | htmx intercepts the same links/forms |
 | Full page render after each action | Fragment swapped into `#todo-app` |
 | `303` redirect after a successful mutation | `200` with the updated panel or item |
-| Five todos per page with Prev/Next | Full filtered list loaded at once |
 | Full edit page at `/todos/:id/edit` | Inline edit form in the list |
 | Validation error renders a full page | Validation error swaps the panel/form |
 | Per-todo swap form | Drag or keyboard swap via htmx, no reload |
@@ -37,7 +36,6 @@ Core actions that work without JavaScript:
 - edit a todo
 - delete a todo
 - filter All / Active / Done
-- browse pages of five todos
 - swap any todo by entering another title or 1-based position
 - reload and use browser back/forward
 
@@ -68,10 +66,9 @@ bun run dev
 
 Open <http://localhost:3000> and follow the link to the todo app at `/app`.
 
-The landing page is deliberately tiny so it fits without scrolling. Without
-JavaScript the todo app shows five todos per page with pagination, so the no-JS
-view stays compact. With htmx available, a hidden `hx-trigger="load"` loader swaps
-in the full filtered list and pagination disappears.
+The landing page is deliberately tiny so it fits without scrolling. The todo app
+renders the full filtered list on one page. There is no pagination: fragment links
+and redirects use `#todo-<id>` anchors to put the user back at the right todo.
 
 `dev` builds the CSS and client bundles once, then starts the server with Bun hot
 reload. Run `watch:css` and `watch:client` in separate terminals if you want the
@@ -112,12 +109,13 @@ bun run start
 src/
   index.tsx              Hono app, static files, server entry
   routes/
-    pages.tsx            landing (/), app page (/app)
+    pages.tsx            landing (/), app (/app), help (/help)
     todos.tsx            htmx fragments, mutations, swap endpoint
   views/
     Layout.tsx           document shell, htmx config, CSS/JS links
     Landing.tsx          tiny landing page with a link to /app
     Home.tsx             compact todo app page
+    Help.tsx             standalone help page for the no-JS fallback
   components/
     TodoApp.tsx          the swap target: form + filters + stats + list
     AddTodoForm.tsx
@@ -126,14 +124,12 @@ src/
     TodoList.tsx
     TodoItem.tsx         row + per-todo no-JS swap form
     TodoEditForm.tsx
-    Pagination.tsx       five per page, Prev/Next
     HelpDialog.tsx       native modal, Invoker API friendly
+    HelpContent.tsx      shared modal/page content
   db/
     todos.ts             SQLite setup, queries, position swap
   lib/
     filter.ts            Filter type and URL helpers
-    pagination.ts        page size and page URL helpers
-    todo-page.ts         filter + page slice helper
     assets.ts            mtime-based CSS/JS cache-busting URLs
     filter.test.ts
   styles/
@@ -146,7 +142,6 @@ src/
     stats.css
     todo-list.css
     todo-item.css
-    pagination.css
     swap-form.css
     help.css
     toast.css
@@ -178,20 +173,21 @@ load and for htmx fragment responses.
 `src/routes/pages.tsx` handles the full pages:
 
 - `GET /` renders the tiny landing page
-- `GET /app` reads `?filter=` and `?page=` and renders the app with five todos
+- `GET /app` reads `?filter=` and renders all matching todos
+- `GET /help` renders the standalone help page used by the no-JS fallback link
 
 `src/routes/todos.tsx` handles the fragment and mutation routes:
 
 | Route | htmx response | No-JS response |
 |---|---|---|
-| `GET /todos?filter=&page=` | full filtered panel fragment | `303` to `/app?...` |
-| `POST /todos` | add, return All page 1 | `303` to `/app` |
-| `POST /todos/:id/toggle` | toggle, return current filter/page | `303` to `/app?...` |
+| `GET /todos?filter=` | full filtered panel fragment | `303` to `/app?filter=...` |
+| `POST /todos` | add, return All panel | `303` to `/app#todo-<id>` |
+| `POST /todos/:id/toggle` | toggle, return current filter panel | `303` to `/app?filter=...#todo-<id>` |
 | `GET /todos/:id/edit` | one item replaced by its edit form | full page with that item in edit mode |
-| `POST /todos/:id/update` | save title, return the normal item | `303` to `/app?...` |
-| `GET /todos/:id` | cancel editing, return the normal item | `303` to `/app?...` |
-| `POST /todos/:id/delete` | delete, return current filter/page | `303` to `/app?...` |
-| `POST /todos/swap` | swap two positions, return panel | `303` to the page where the swapped todo landed, with `#todo-<id>` |
+| `POST /todos/:id/update` | save title, return the normal item | `303` to `/app?filter=...#todo-<id>` |
+| `GET /todos/:id` | cancel editing, return the normal item | `303` to `/app?filter=...#todo-<id>` |
+| `POST /todos/:id/delete` | delete, return current filter panel | `303` to `/app?filter=...` |
+| `POST /todos/swap` | swap two positions, return panel | `303` to `/app?filter=...#todo-<id>` |
 
 The no-JS response is the real form/link target. The htmx response is the same
 route with an `HX-Request` header.
@@ -224,19 +220,12 @@ JavaScript disabled. htmx intercepts them, requests `/todos?filter=active`, and
 pushes `/app?filter=active` into history. Reload and back/forward work because the
 full-page route reads the same query parameter.
 
-Pagination is the no-JS baseline: `/app?filter=active&page=2` is the real URL and
-page size is five. With htmx, the initial page contains an empty
-`hx-trigger="load"` loader. It requests `/todos?filter=...&all=1`, replaces
-`#todo-app` with the full filtered list, and uses `HX-Replace-Url` to remove the
-page number from the address bar. All later htmx panel responses also return the
-full filtered list, so pagination is absent while htmx is active.
-
 ### Scroll restoration without JavaScript
 
 Every todo row has a stable `id="todo-<id>"`. No-JS redirects and links include a
 fragment such as `#todo-12`:
 
-- after add, update, or swap, the `303` points at the page and todo that moved
+- after add, update, or swap, the `303` points at the todo that moved
 - the edit page and cancel link also use `#todo-<id>`
 
 The browser then scrolls to the affected row natively. This does not restore an
@@ -244,11 +233,11 @@ exact pixel offset, which is not possible for a POST/Redirect/GET cycle without
 JavaScript, but it restores the user to the relevant todo. Normal browser
 back/forward navigation still restores the browser's own exact scroll history.
 
-Filter forms and links include `?filter=` and `?page=` in their real URLs, so a
-no-JS submit returns to the same filtered page. For htmx requests the server falls
-back to htmx's `HX-Current-URL` header if a query parameter is absent. Adding
-always returns the All view at page 1, and moves the URL back to `/app` when
-needed, so the new todo is visible immediately.
+Filter forms and links include `?filter=` in their real URLs, so a no-JS submit
+returns to the same filtered view. For htmx requests the server falls back to
+htmx's `HX-Current-URL` header if the query parameter is absent. Adding always
+returns the All view, and moves the URL back to `/app` when needed, so the new
+todo is visible immediately.
 
 ### Validation and errors
 
@@ -351,7 +340,11 @@ separate vertical block.
   `commandfor="help-dialog"` and `command="show-modal"`. In browsers that support
   it, the modal opens without JavaScript.
 - Browsers without Invoker support get a small JS fallback when the client bundle
-  loads. Without JS and without Invoker support, the button is inert.
+  loads.
+- Without JS, a `Help page` link is rendered in the header. It opens `/help` in a
+  new tab, so help is still reachable when the Invoker API is unavailable.
+- Fixed popup dimensions would require JavaScript. No-JS users get a normal new
+  tab; JS users get the in-page modal.
 - The modal is a native `<dialog>` with a labelled heading and `method="dialog"`
   close buttons.
 - `?` opens the help dialog when JS is available and the user is not typing in a
@@ -360,8 +353,10 @@ separate vertical block.
 - `Escape` closes the dialog or cancels inline editing.
 - `ArrowUp` / `ArrowDown` swaps the focused todo with the previous or next todo.
 
-`theme.ts` toggles `data-theme` on `<html>` and stores the choice in
-`localStorage`. CSS variables in `theme.css` do the rest.
+`theme.ts` only sets `data-theme` on `<html>` when there is a stored explicit
+choice. If there is none, `theme.css` follows `prefers-color-scheme`, including
+when JavaScript is disabled. The toggle stores the user's explicit light/dark
+choice in `localStorage`; CSS variables in `theme.css` do the rest.
 
 ## How the CSS works
 
@@ -376,7 +371,6 @@ Each component owns a stylesheet. `src/styles/main.css` imports them all:
 @import "./stats.css";
 @import "./todo-list.css";
 @import "./todo-item.css";
-@import "./pagination.css";
 @import "./swap-form.css";
 @import "./help.css";
 @import "./toast.css";
@@ -386,8 +380,10 @@ Each component owns a stylesheet. `src/styles/main.css` imports them all:
 `public/styles/main.css`. The page has one `<link rel="stylesheet">`, not one per
 component.
 
-`theme.css` defines light and dark design tokens. Component CSS uses only those
-tokens, so the theme switch needs no duplicated component rules.
+`theme.css` defines light and dark design tokens. On a first visit with no stored
+choice, a `prefers-color-scheme: dark` media query selects the dark tokens. An
+explicit `data-theme` choice overrides that query. Component CSS uses only the
+tokens, so no component needs duplicated theme rules.
 
 The visual direction is deliberately retro: monospace type, paper/CRT palettes,
 hard offset shadows, square controls, and `--radius: 1px`. No component uses a
@@ -446,9 +442,7 @@ Manual checks worth doing:
   second edit form cannot open
 - cancel or save, then confirm the title links are enabled again
 - confirm the landing page at `/` fits without scrolling and only links to `/app`
-- without JS, confirm the app shows five todos per page and Prev/Next keeps the filter
-- with JS, confirm the page loads the full filtered list and pagination disappears
-- with JS, confirm the address bar loses any `page=` value after the auto-load
+- confirm the app shows all matching todos on one page with no pagination
 - without JS, add/update/swap and confirm the redirect includes `#todo-<id>` and
   scrolls to that row
 - filter All/Active/Done, then reload and use back/forward
@@ -462,11 +456,14 @@ Manual checks worth doing:
 - confirm each todo has a swap form without JavaScript
 - confirm handles are absent in filtered views
 - switch themes, reload, confirm the choice persisted
+- clear the theme choice, emulate `prefers-color-scheme: dark`, and confirm the
+  page starts dark; repeat with JS disabled
 - submit an empty title and confirm the inline validation message
 - submit an invalid swap and confirm the inline error
 - navigate the page with the keyboard only, including the skip link
 - click Help in the header, then close it with Escape or the Close button
 - press `?` to open Help, and confirm it does not open while typing in an input
+- with JS disabled, confirm the `Help page` fallback link opens `/help` in a new tab
 - confirm no visual radius exceeds 1px
 
 ## Performance notes

@@ -34,7 +34,16 @@ export function Layout({
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="color-scheme" content="light dark" />
-        <meta name="theme-color" content="#f2ead8" />
+        <meta
+          name="theme-color"
+          content="#f2ead8"
+          media="(prefers-color-scheme: light)"
+        />
+        <meta
+          name="theme-color"
+          content="#12120f"
+          media="(prefers-color-scheme: dark)"
+        />
         <meta name="robots" content="index, follow" />
         <meta name="description" content={description} />
         <meta property="og:type" content="website" />

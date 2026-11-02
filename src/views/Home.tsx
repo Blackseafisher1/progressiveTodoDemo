@@ -24,6 +24,16 @@ export function Home(props: TodoAppProps) {
             >
               Help <kbd>?</kbd>
             </button>
+            <noscript>
+              <a
+                class="header-link help-fallback"
+                href="/help"
+                target="_blank"
+                rel="noopener"
+              >
+                Help page
+              </a>
+            </noscript>
             <a class="header-link" href="/">
               Home
             </a>
@@ -55,24 +65,11 @@ export function Home(props: TodoAppProps) {
               </noscript>
             </div>
           </div>
-          <p class="page-size-note">
-            <span class="page-size-nojs">5 per page without JS</span>
-            <span class="page-size-js">All todos loaded</span>
-          </p>
         </div>
 
         <p id="reorder-status" class="sr-only" aria-live="polite"></p>
 
         <TodoApp {...props} />
-
-        <div
-          class="js-all-loader"
-          hx-get={`/todos?filter=${props.filter}&all=1`}
-          hx-trigger="load"
-          hx-target="#todo-app"
-          hx-swap="outerHTML"
-          aria-hidden="true"
-        ></div>
       </main>
 
       <footer class="site-footer">

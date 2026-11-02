@@ -168,7 +168,6 @@ function swapOnServer(first: HTMLLIElement, second: HTMLLIElement): void {
 
   const params = new URLSearchParams(window.location.search)
   const filter = params.get('filter') ?? 'all'
-  const page = params.get('page') ?? '1'
   const firstName =
     first.querySelector('.todo-title')?.textContent?.trim() ?? 'todo'
   const secondName =
@@ -176,7 +175,7 @@ function swapOnServer(first: HTMLLIElement, second: HTMLLIElement): void {
 
   announce(`Swapping ${firstName} with ${secondName}.`)
 
-  const url = `/todos/swap?filter=${encodeURIComponent(filter)}&page=${encodeURIComponent(page)}`
+  const url = `/todos/swap?filter=${encodeURIComponent(filter)}`
   const notifyFailure = () => {
     document.body.dispatchEvent(
       new CustomEvent('toast', {

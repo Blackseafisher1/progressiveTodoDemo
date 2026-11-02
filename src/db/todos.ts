@@ -143,8 +143,8 @@ export function seedTodos(): void {
     ['Edit a todo inline', false],
     ['This one is already done', true],
     ['Swap two todos with the form', false],
-    ['Five todos fit on one page', false],
-    ['Turn the page to see more', false],
+    ['All todos are on one page', false],
+    ['Anchor links restore your place', false],
     ['The order is stored on the server', false],
   ]
 

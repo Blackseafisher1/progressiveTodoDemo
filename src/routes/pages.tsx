@@ -1,8 +1,7 @@
 import { Hono } from 'hono'
-import { getStats } from '../db/todos'
+import { getStats, listTodos } from '../db/todos'
 import { parseFilter } from '../lib/filter'
-import { parsePage } from '../lib/pagination'
-import { getTodoPage } from '../lib/todo-page'
+import { Help } from '../views/Help'
 import { Home } from '../views/Home'
 import { Landing } from '../views/Landing'
 
@@ -12,18 +11,16 @@ pages.get('/', (c) => c.html(<Landing />))
 
 pages.get('/app', (c) => {
   const filter = parseFilter(c.req.query('filter'))
-  const requestedPage = parsePage(c.req.query('page'))
-  const { todos, page, pageCount } = getTodoPage(filter, requestedPage)
 
   return c.html(
     <Home
       filter={filter}
-      todos={todos}
+      todos={listTodos(filter)}
       stats={getStats()}
-      page={page}
-      pageCount={pageCount}
     />,
   )
 })
+
+pages.get('/help', (c) => c.html(<Help />))
 
 export default pages
