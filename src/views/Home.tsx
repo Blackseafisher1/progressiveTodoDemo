@@ -30,8 +30,10 @@ export function Home(props: TodoAppProps) {
                 href="/help"
                 target="_blank"
                 rel="noopener"
+                aria-label="Open help in a new tab"
+                title="Open help in a new tab"
               >
-                Help page
+                <span aria-hidden="true">↗</span>
               </a>
             </noscript>
             <a class="header-link" href="/">

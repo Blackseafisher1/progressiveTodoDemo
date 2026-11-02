@@ -341,10 +341,15 @@ separate vertical block.
   it, the modal opens without JavaScript.
 - Browsers without Invoker support get a small JS fallback when the client bundle
   loads.
-- Without JS, a `Help page` link is rendered in the header. It opens `/help` in a
-  new tab, so help is still reachable when the Invoker API is unavailable.
-- Fixed popup dimensions would require JavaScript. No-JS users get a normal new
-  tab; JS users get the in-page modal.
+- The Invoker button is always visible, so no-JS browsers that support Invoker
+  still open the modal.
+- With JS disabled, a tiny `↗` fallback link appears next to the button and opens
+  `/help` in a new tab for browsers without Invoker support.
+- A single HTML element cannot do both: `commandfor` is only valid on buttons,
+  while the no-JS new-tab fallback needs a real link. The fallback is kept small so
+  the modal button remains the primary control.
+- Fixed popup dimensions require JavaScript, so no-JS users get a normal new tab.
+- The modal and `/help` page share the same `HelpContent` component.
 - The modal is a native `<dialog>` with a labelled heading and `method="dialog"`
   close buttons.
 - `?` opens the help dialog when JS is available and the user is not typing in a
@@ -463,7 +468,8 @@ Manual checks worth doing:
 - navigate the page with the keyboard only, including the skip link
 - click Help in the header, then close it with Escape or the Close button
 - press `?` to open Help, and confirm it does not open while typing in an input
-- with JS disabled, confirm the `Help page` fallback link opens `/help` in a new tab
+- with JS disabled, confirm the Invoker help button still works in supporting
+  browsers and the tiny `↗` fallback opens `/help` in a new tab
 - confirm no visual radius exceeds 1px
 
 ## Performance notes
