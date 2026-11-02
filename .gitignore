@@ -1,0 +1,6 @@
+node_modules
+todo.sqlite
+todo.sqlite-shm
+todo.sqlite-wal
+public/styles/main.css
+public/js/app.js

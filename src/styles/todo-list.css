@@ -1,0 +1,22 @@
+.todo-list {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  list-style: none;
+}
+
+.todo-empty {
+  padding: 2rem 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.todo-empty::before {
+  content: "// ";
+  color: var(--accent);
+}

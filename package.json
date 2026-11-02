@@ -1,0 +1,25 @@
+{
+  "name": "todo-studio",
+  "private": true,
+  "scripts": {
+    "all": "bun run dev  && typecheck",
+    "dev": "bun run build && bun run --hot src/index.tsx",
+    "start": "bun run build && bun run src/index.tsx",
+    "build": "bun run build:css && bun run build:client",
+    "build:css": "bun run scripts/build-css.ts",
+    "build:client": "bun run scripts/build-client.ts",
+    "watch:css": "bun build src/styles/main.css --outdir public/styles --watch",
+    "watch:client": "bun build src/client/app.ts --outdir public/js --target browser --watch",
+    "seed": "bun run scripts/seed.ts",
+    "tc": "typecheck",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "hono": "^4.13.14",
+    "typescript": "^6"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

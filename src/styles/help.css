@@ -1,0 +1,141 @@
+.help-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.help-button:hover {
+  color: var(--accent-strong);
+}
+
+.help-button kbd,
+.shortcut-list kbd {
+  display: inline-grid;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  place-items: center;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.help-dialog {
+  width: min(580px, calc(100% - 2rem));
+  max-height: min(86vh, 760px);
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.help-dialog::backdrop {
+  background: rgba(20, 17, 12, 0.58);
+}
+
+.help-dialog-body {
+  padding: 1.1rem;
+}
+
+.help-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.help-dialog-head h2 {
+  font-size: clamp(1.35rem, 4vw, 1.9rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.help-lead {
+  margin: 0.85rem 0 1rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.help-subtitle {
+  margin: 1rem 0 0.4rem;
+  color: var(--accent-strong);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.shortcut-list,
+.help-list {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shortcut-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 0.8rem;
+}
+
+.shortcut-list li:last-child {
+  border-bottom: 0;
+}
+
+.shortcut-list li span {
+  flex: 1 1 200px;
+  color: var(--muted);
+}
+
+.help-list li {
+  padding-left: 0.9rem;
+  position: relative;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.help-list li::before {
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  content: "//";
+}
+
+.help-list code {
+  color: var(--ink);
+  font-size: 0.75rem;
+}
+
+.help-footer {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+@media (pointer: coarse) {
+  .help-button {
+    min-height: 44px;
+    padding: 0 0.35rem;
+  }
+}

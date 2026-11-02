@@ -1,0 +1,40 @@
+.add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-bottom: 0.85rem;
+  padding: 0.85rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-small);
+}
+
+.add-input {
+  flex: 1 1 240px;
+  min-height: 42px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.add-input::placeholder {
+  color: var(--muted);
+}
+
+.add-input:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.add-form .button {
+  flex: 0 0 auto;
+}
+
+.add-form .form-error {
+  flex-basis: 100%;
+  margin: 0;
+}
