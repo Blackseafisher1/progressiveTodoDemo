@@ -62,6 +62,7 @@ html.js .drag-handle {
 }
 
 .todo-check {
+  margin-top: 0.8rem;
   display: grid;
   place-items: center;
   width: 24px;
